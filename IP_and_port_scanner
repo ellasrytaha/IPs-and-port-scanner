@@ -1,0 +1,34 @@
+#!usr/bin/bash
+U='1 received'
+OCT=$(cat  /home/taha/Desktop/oscp/portscanner/oct.txt ) #set a variable to have the value of oct.txt
+#1st octets of the network ip
+ifconfig | grep broadcast | awk -F " " '{print $2 }' | cut -d "." -f 1,2,3 | uniq > /home/taha/Desktop/oscp/portscanner/oct.txt
+
+#create new text file with the name of the octs of the network
+echo " " > /home/taha/Desktop/oscp/portscanner/$OCT.txt
+
+task(){
+	  n=$(ping -c 1 $1) 
+if [[ $n == *$U* ]] 
+then
+	
+      	echo "$1" >> $OCT.txt 
+	nmap $1 > $1.nmap.txt
+fi 
+
+   }
+
+
+
+#loop
+for ip in {1..254} 
+do
+	a=$OCT.$ip
+	task $a &
+done
+
+#performe nmap scan on devices
+<<a
+nmap  --top-ports 20 -iL $OCT.txt > 
+exit
+a
